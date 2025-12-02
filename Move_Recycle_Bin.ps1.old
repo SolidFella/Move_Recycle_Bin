@@ -1,0 +1,18 @@
+$shell = New-Object -ComObject Shell.Application
+$recycleBin = $shell.Namespace(0xA) # 0xA represents the Recycle Bin
+$destinationFolder = "\\10.1.10.207\Recycle_Bin_Desk_Manager" # Specify your desired destination folder
+
+# Iterate through items in the Recycle Bin and move them
+$recycleBin.Items() | ForEach-Object {
+    $sourcePath = $_.Path
+    $fileName = $_.Name
+    $destinationPath = Join-Path $destinationFolder $fileName
+
+    try {
+        Move-Item -Path $sourcePath -Destination $destinationPath -Force
+        Write-Host "Moved '$fileName' to '$destinationFolder'"
+    }
+    catch {
+        Write-Host "Failed to move '$fileName': $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
